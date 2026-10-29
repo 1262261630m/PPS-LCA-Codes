@@ -1,0 +1,7 @@
+#include<stdio.h>
+int main() 
+{
+	printf("My College is MIT-WPU");
+	return 0;
+}
+
