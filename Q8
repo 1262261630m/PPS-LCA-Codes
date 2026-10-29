@@ -1,0 +1,6 @@
+#include<stdio.h>   
+int main() 
+{    
+printf("Name:\tMrunali");    
+return 0;  
+}
