@@ -1,0 +1,8 @@
+#include <stdio.h>    
+int main() 
+{     
+printf("Student Introduction\n");     
+printf("Name: Mrunali\n");     
+printf("Class: First Year");     
+return 0;  
+}
