@@ -1,1 +1,52 @@
+#include<stdio.h>
+#include<string.h>
+ struct Sensor {
+  int id;
+  char position[20];
+  int readings;
+  char conditions[20];
+   };
+    
+    void classify(Sensor) { 
+    if (0<Sensor[i].readings<300 ) {
+    printf("Sensor condition: On the line ");}
+     else if(301<Sensor[i].readings<600) { 
+     printf("Sensor condition: Near the edge ");}
+      else(601<Sensor[i].readings<1023) { 
+     printf("Sensor condition: Off line");}
+     
+     if (Sensor[0].position=="On the line" && Sensor[1].position=="On the line" && Sensor[2].position=="On the line")
+     {
+      printf("On Track");}
+     if else (Sensor[0].position=="On the line" && Sensor[1].position=="off line" && Sensor[2].position=="off line")
+     {
+      printf("Drift Left(Turn Right)");}
+      if else(Sensor[0].position=="off line" && Sensor[1].position=="off line" && Sensor[2].position=="On the line")
+      {
+      printf("Drift Right(Turn Left)");}
+      if else (Sensor[0].position=="off line" && Sensor[1].position=="On the line" && Sensor[2].position=="off line")
+       {
+      printf("Centre");}
+      
+   } 
+   
+    int main()
+    {
+    int i,n;
+    printf("Enter no. of sensors: ");
+    scanf("%d",&n);
+    for(i=0;i<n;i++)
+    {
+	printf("Enter the details of Sensors: %d\n, i+1");
+	printf("Sensor Id: \n");
+	scanf("%d",&Sensor[i].id);
+	printf("Sensor Position: \n");
+	scanf("%c",&Sensor[i].position);
+	printf("Sensor Readings: \n");
+	scanf("%d",&Sensor[i].readings);
+	
+	printf("Sensor[i].id/nSensor[i].position/nSensor[i].readings/n");
+	 classify(Sensor);
+     }
+    }
 
