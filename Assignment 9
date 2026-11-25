@@ -1,1 +1,120 @@
+#include <stdio.h>
+#include <string.h>
 
+#define MOISTURE_LIMIT 30.0
+#define HEALTH_LIMIT 70
+
+typedef struct {
+    int id;
+    float moisture, temperature, humidity;
+    int cropHealth;
+    float latitude, longitude;
+} FieldRecord;
+
+void addRecord() {
+    FILE *fp = fopen("field_data.txt", "a");
+    if (!fp) {
+        printf("Error: Cannot open file\n");
+        return;
+    }
+    FieldRecord r;
+    printf("Enter Field ID: ");
+    scanf("%d", &r.id);
+    printf("Enter Soil Moisture (%%): ");
+    scanf("%f", &r.moisture);
+    printf("Enter Temperature (C): ");
+    scanf("%f", &r.temperature);
+    printf("Enter Humidity (%%): ");
+    scanf("%f", &r.humidity);
+    printf("Enter Crop Health (%%): ");
+    scanf("%d", &r.cropHealth);
+    printf("Enter Latitude: ");
+    scanf("%f", &r.latitude);
+    printf("Enter Longitude: ");
+    scanf("%f", &r.longitude);
+
+    fprintf(fp, "%d %.2f %.2f %.2f %d %.4f %.4f\n",
+            r.id, r.moisture, r.temperature, r.humidity,
+            r.cropHealth, r.latitude, r.longitude);
+    fclose(fp);
+    printf("Record added successfully!\n");
+}
+
+void generateReport() {
+    FILE *fp = fopen("field_data.txt", "r");
+    if (!fp) {
+        printf("No readings found!\n");
+        return;
+    }
+
+    FILE *rep = fopen("field_report.txt", "w");
+    FieldRecord r;
+    int total = 0, irrigationCount = 0, stressCount = 0;
+
+    printf("\n==== Agricultural Field Monitoring Report ====\n");
+    printf("ID\tMoisture\tTemp\tHumidity\tHealth\tDecision\n");
+
+    fprintf(rep, "=== Field Monitoring Report ===\n");
+    fprintf(rep, "Date : 16-Nov-2026\n\n");
+    fprintf(rep, "--- Field-wise Details ---\n");
+    fprintf(rep, "ID\tGPS (Lat, Long)\t\tStatus\n");
+
+    while (fscanf(fp, "%d %f %f %f %d %f %f",
+                  &r.id, &r.moisture, &r.temperature, &r.humidity,
+                  &r.cropHealth, &r.latitude, &r.longitude) == 7) {
+        total++;
+        char decision[50] = "Normal";
+
+        int lowMoisture = (r.moisture < MOISTURE_LIMIT);
+        int lowHealth = (r.cropHealth < HEALTH_LIMIT);
+
+        if (lowMoisture && lowHealth) {
+            strcpy(decision, "Irrigation + Crop Attention");
+            irrigationCount++;
+            stressCount++;
+        } else if (lowMoisture) {
+            strcpy(decision, "Irrigation Required");
+            irrigationCount++;
+        } else if (lowHealth) {
+            strcpy(decision, "Crop Attention");
+            stressCount++;
+        } else if (r.temperature > 35.0) {
+            strcpy(decision, "Heat Stress (Monitor)");
+        } else if (r.moisture < 35.0) {
+            strcpy(decision, "Monitor (Low Moisture)");
+        }
+
+        printf("%d\t%.0f%%\t\t%.1fC\t%.0f%%\t\t%d%%\t%s\n",
+               r.id, r.moisture, r.temperature, r.humidity, r.cropHealth, decision);
+
+        if (strcmp(decision, "Normal") != 0) {
+            fprintf(rep, "%d\t(%.4f, %.4f)\t%s\n",
+                    r.id, r.latitude, r.longitude, decision);
+        }
+    }
+
+    printf("\nTotal Fields Scanned: %d | Irrigation: %d | Crop Stress: %d\n",
+           total, irrigationCount, stressCount);
+    printf("Report generated: field_report.txt\n");
+
+    fclose(fp);
+    fclose(rep);
+}
+
+int main() {
+    int ch;
+    while (1) {
+        printf("\n=== Smart Agri Robot ===\n");
+        printf("1. Add Field Reading\n");
+        printf("2. Generate Field Report\n");
+        printf("3. Exit\n");
+        printf("Choice: ");
+        scanf("%d", &ch);
+
+        if (ch == 1) addRecord();
+        else if (ch == 2) generateReport();
+        else if (ch == 3) break;
+        else printf("Invalid choice!\n");
+    }
+    return 0;
+}
